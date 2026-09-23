@@ -1,0 +1,317 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TaskHub",
+    "version": "1.0.0",
+    "description": "A small task-tracker API. Easy-tier feature-stress spec: plain CRUD, apiKey header auth, string enums, date-time fields, one 204 response, path parameters."
+  },
+  "servers": [{ "url": "http://localhost:4010" }],
+  "security": [{ "apiKeyAuth": [] }],
+  "tags": [
+    { "name": "tasks", "description": "Task management" },
+    { "name": "labels", "description": "Task labels" }
+  ],
+  "paths": {
+    "/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "tags": ["tasks"],
+        "summary": "List all tasks",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Only return tasks with this status.",
+            "schema": { "$ref": "#/components/schemas/TaskStatus" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of tasks.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TaskList" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTask",
+        "tags": ["tasks"],
+        "summary": "Create a task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TaskCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created task.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid task payload.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}": {
+      "get": {
+        "operationId": "getTask",
+        "tags": ["tasks"],
+        "summary": "Fetch a single task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Numeric id of the task.",
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested task.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          },
+          "404": {
+            "description": "No task with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateTask",
+        "tags": ["tasks"],
+        "summary": "Update a task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Numeric id of the task.",
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TaskUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated task.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          },
+          "404": {
+            "description": "No task with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTask",
+        "tags": ["tasks"],
+        "summary": "Delete a task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Numeric id of the task.",
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Task deleted; no content." },
+          "404": {
+            "description": "No task with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/complete": {
+      "post": {
+        "operationId": "completeTask",
+        "tags": ["tasks"],
+        "summary": "Mark a task as done",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Numeric id of the task.",
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The completed task.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          },
+          "404": {
+            "description": "No task with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/labels": {
+      "get": {
+        "operationId": "listLabels",
+        "tags": ["labels"],
+        "summary": "List available labels",
+        "responses": {
+          "200": {
+            "description": "All labels.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LabelList" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key"
+      }
+    },
+    "schemas": {
+      "TaskStatus": {
+        "type": "string",
+        "enum": ["todo", "in_progress", "done"],
+        "description": "Lifecycle state of a task."
+      },
+      "TaskPriority": {
+        "type": "string",
+        "enum": ["low", "medium", "high"],
+        "description": "Relative priority of a task."
+      },
+      "Task": {
+        "type": "object",
+        "required": ["id", "title", "status", "priority", "createdAt"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/TaskStatus" },
+          "priority": { "$ref": "#/components/schemas/TaskPriority" },
+          "labels": { "type": "array", "items": { "type": "string" } },
+          "dueAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TaskCreate": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "priority": { "$ref": "#/components/schemas/TaskPriority" },
+          "labels": { "type": "array", "items": { "type": "string" } },
+          "dueAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TaskUpdate": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/TaskStatus" },
+          "priority": { "$ref": "#/components/schemas/TaskPriority" },
+          "labels": { "type": "array", "items": { "type": "string" } },
+          "dueAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TaskList": {
+        "type": "object",
+        "required": ["items", "total"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Task" }
+          },
+          "total": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "Label": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      },
+      "LabelList": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Label" }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

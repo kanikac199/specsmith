@@ -1,0 +1,835 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Polyform Content Store",
+    "version": "2.0.0",
+    "description": "A structured content store. Hard-tier feature-stress spec: oneOf with a discriminator (Block = TextBlock | ImageBlock | EmbedBlock), allOf composition over a shared BlockBase, nullable fields, uuid/date/date-time/email formats, mixed apiKey + bearer auth varying per operation, and a deeply nested metadata object."
+  },
+  "servers": [{ "url": "http://localhost:4010" }],
+  "security": [{ "bearerAuth": [] }],
+  "tags": [
+    { "name": "documents", "description": "Documents and their blocks" },
+    { "name": "collections", "description": "Document collections" },
+    { "name": "authors", "description": "Author profiles" }
+  ],
+  "paths": {
+    "/documents": {
+      "get": {
+        "operationId": "listDocuments",
+        "tags": ["documents"],
+        "summary": "List documents with cursor pagination",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor from a previous page's nextCursor.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size.",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Only documents in these statuses (repeat the parameter).",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["draft", "published", "archived"] }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of documents.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DocumentList" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDocument",
+        "tags": ["documents"],
+        "summary": "Create a document",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DocumentCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created document.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Document" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{documentId}": {
+      "get": {
+        "operationId": "getDocument",
+        "tags": ["documents"],
+        "summary": "Fetch a document",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested document.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Document" }
+              }
+            }
+          },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateDocument",
+        "tags": ["documents"],
+        "summary": "Update a document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DocumentUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated document.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Document" }
+              }
+            }
+          },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDocument",
+        "tags": ["documents"],
+        "summary": "Delete a document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Document deleted; no content." },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/publish": {
+      "post": {
+        "operationId": "publishDocument",
+        "tags": ["documents"],
+        "summary": "Publish a draft document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The published document.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Document" }
+              }
+            }
+          },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/blocks": {
+      "get": {
+        "operationId": "listBlocks",
+        "tags": ["documents"],
+        "summary": "List a document's blocks",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document's blocks in order.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BlockList" }
+              }
+            }
+          },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "appendBlock",
+        "tags": ["documents"],
+        "summary": "Append a block to a document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Block" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The appended block.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Block" }
+              }
+            }
+          },
+          "404": {
+            "description": "No document with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/blocks/{blockId}": {
+      "get": {
+        "operationId": "getBlock",
+        "tags": ["documents"],
+        "summary": "Fetch a single block",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "blockId",
+            "in": "path",
+            "required": true,
+            "description": "Block uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested block.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Block" }
+              }
+            }
+          },
+          "404": {
+            "description": "No such document or block.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteBlock",
+        "tags": ["documents"],
+        "summary": "Remove a block from a document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "Document uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "blockId",
+            "in": "path",
+            "required": true,
+            "description": "Block uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Block removed; no content." },
+          "404": {
+            "description": "No such document or block.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collections": {
+      "get": {
+        "operationId": "listCollections",
+        "tags": ["collections"],
+        "summary": "List collections",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "All collections.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CollectionList" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCollection",
+        "tags": ["collections"],
+        "summary": "Create a collection (requires both the api key and a bearer token)",
+        "security": [{ "apiKeyAuth": [], "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CollectionCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created collection.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Collection" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}": {
+      "get": {
+        "operationId": "getCollection",
+        "tags": ["collections"],
+        "summary": "Fetch a collection",
+        "security": [{ "apiKeyAuth": [] }, { "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "description": "Collection uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested collection.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Collection" }
+              }
+            }
+          },
+          "404": {
+            "description": "No collection with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/{authorId}": {
+      "get": {
+        "operationId": "getAuthor",
+        "tags": ["authors"],
+        "summary": "Fetch a public author profile (no auth required)",
+        "security": [],
+        "parameters": [
+          {
+            "name": "authorId",
+            "in": "path",
+            "required": true,
+            "description": "Author uuid.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The author profile.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Author" }
+              }
+            }
+          },
+          "404": {
+            "description": "No author with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "BlockBase": {
+        "type": "object",
+        "required": ["id", "type", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "type": { "type": "string", "description": "Discriminator: text | image | embed." },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TextBlock": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BlockBase" },
+          {
+            "type": "object",
+            "required": ["type", "text"],
+            "properties": {
+              "type": { "type": "string", "enum": ["text"] },
+              "text": { "type": "string" },
+              "language": {
+                "type": "string",
+                "nullable": true,
+                "description": "Syntax-highlight language, or null for prose."
+              }
+            }
+          }
+        ]
+      },
+      "ImageBlock": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BlockBase" },
+          {
+            "type": "object",
+            "required": ["type", "url"],
+            "properties": {
+              "type": { "type": "string", "enum": ["image"] },
+              "url": { "type": "string" },
+              "altText": { "type": "string" },
+              "caption": { "type": "string", "nullable": true },
+              "width": { "type": "integer", "minimum": 1 },
+              "height": { "type": "integer", "minimum": 1 }
+            }
+          }
+        ]
+      },
+      "EmbedBlock": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BlockBase" },
+          {
+            "type": "object",
+            "required": ["type", "provider", "url"],
+            "properties": {
+              "type": { "type": "string", "enum": ["embed"] },
+              "provider": { "type": "string", "enum": ["youtube", "vimeo", "twitter"] },
+              "url": { "type": "string" },
+              "title": { "type": "string", "nullable": true }
+            }
+          }
+        ]
+      },
+      "Block": {
+        "oneOf": [
+          { "$ref": "#/components/schemas/TextBlock" },
+          { "$ref": "#/components/schemas/ImageBlock" },
+          { "$ref": "#/components/schemas/EmbedBlock" }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "text": "#/components/schemas/TextBlock",
+            "image": "#/components/schemas/ImageBlock",
+            "embed": "#/components/schemas/EmbedBlock"
+          }
+        }
+      },
+      "BlockList": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Block" }
+          }
+        }
+      },
+      "Author": {
+        "type": "object",
+        "required": ["id", "name", "email"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "avatarUrl": { "type": "string", "nullable": true },
+          "joinedOn": { "type": "string", "format": "date" }
+        }
+      },
+      "DocumentMetadata": {
+        "type": "object",
+        "description": "Deeply nested presentation metadata.",
+        "properties": {
+          "readingTimeMinutes": { "type": "integer", "minimum": 0 },
+          "seo": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string", "nullable": true },
+              "openGraph": {
+                "type": "object",
+                "required": ["image"],
+                "properties": {
+                  "siteName": { "type": "string" },
+                  "image": {
+                    "type": "object",
+                    "required": ["url"],
+                    "properties": {
+                      "url": { "type": "string" },
+                      "dimensions": {
+                        "type": "object",
+                        "required": ["width", "height"],
+                        "properties": {
+                          "width": { "type": "integer", "minimum": 1 },
+                          "height": { "type": "integer", "minimum": 1 }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "required": ["id", "title", "status", "author", "blocks", "publishedAt", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+          "author": { "$ref": "#/components/schemas/Author" },
+          "blocks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Block" }
+          },
+          "metadata": { "$ref": "#/components/schemas/DocumentMetadata" },
+          "collectionId": { "type": "string", "format": "uuid", "nullable": true },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Null until the document is published."
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "DocumentCreate": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "collectionId": { "type": "string", "format": "uuid", "nullable": true },
+          "metadata": { "$ref": "#/components/schemas/DocumentMetadata" },
+          "blocks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Block" }
+          }
+        }
+      },
+      "DocumentUpdate": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+          "collectionId": { "type": "string", "format": "uuid", "nullable": true },
+          "metadata": { "$ref": "#/components/schemas/DocumentMetadata" }
+        }
+      },
+      "DocumentList": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Document" }
+          },
+          "nextCursor": { "type": "string", "nullable": true }
+        }
+      },
+      "Collection": {
+        "type": "object",
+        "required": ["id", "name", "createdOn"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "createdOn": { "type": "string", "format": "date" }
+        }
+      },
+      "CollectionCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "slug": { "type": "string" }
+        }
+      },
+      "CollectionList": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Collection" }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "requestId": { "type": "string", "format": "uuid", "nullable": true }
+        }
+      }
+    }
+  }
+}

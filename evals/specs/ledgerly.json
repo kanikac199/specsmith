@@ -1,0 +1,633 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ledgerly",
+    "version": "1.2.0",
+    "description": "A double-entry bookkeeping API. Medium-tier feature-stress spec: bearer auth, cursor pagination, arrays of objects, numeric minimum constraints, array-valued query parameters, 404 and default error responses."
+  },
+  "servers": [{ "url": "http://localhost:4010" }],
+  "security": [{ "bearerAuth": [] }],
+  "tags": [
+    { "name": "accounts", "description": "Chart of accounts" },
+    { "name": "transactions", "description": "Journal transactions" },
+    { "name": "categories", "description": "Reporting categories" }
+  ],
+  "paths": {
+    "/accounts": {
+      "get": {
+        "operationId": "listAccounts",
+        "tags": ["accounts"],
+        "summary": "List accounts with cursor pagination",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor from a previous page's nextCursor.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size.",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of accounts.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountPage" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAccount",
+        "tags": ["accounts"],
+        "summary": "Create an account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created account.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}": {
+      "get": {
+        "operationId": "getAccount",
+        "tags": ["accounts"],
+        "summary": "Fetch an account",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Account identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested account.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          },
+          "404": {
+            "description": "No account with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateAccount",
+        "tags": ["accounts"],
+        "summary": "Update an account",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Account identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated account.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Account" }
+              }
+            }
+          },
+          "404": {
+            "description": "No account with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAccount",
+        "tags": ["accounts"],
+        "summary": "Archive an account",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Account identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Account archived; no content." },
+          "404": {
+            "description": "No account with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/balance": {
+      "get": {
+        "operationId": "getAccountBalance",
+        "tags": ["accounts"],
+        "summary": "Current balance of an account",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Account identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The account balance.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Balance" }
+              }
+            }
+          },
+          "404": {
+            "description": "No account with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "operationId": "listTransactions",
+        "tags": ["transactions"],
+        "summary": "List transactions with cursor pagination and filters",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor from a previous page's nextCursor.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size.",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
+          },
+          {
+            "name": "accountIds",
+            "in": "query",
+            "required": false,
+            "description": "Only transactions touching these accounts (repeat the parameter).",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter by transaction status.",
+            "schema": { "type": "string", "enum": ["pending", "posted", "void"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of transactions.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TransactionPage" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTransaction",
+        "tags": ["transactions"],
+        "summary": "Record a transaction",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The recorded transaction.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transactionId}": {
+      "get": {
+        "operationId": "getTransaction",
+        "tags": ["transactions"],
+        "summary": "Fetch a transaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "description": "Transaction identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested transaction.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "404": {
+            "description": "No transaction with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transactionId}/void": {
+      "post": {
+        "operationId": "voidTransaction",
+        "tags": ["transactions"],
+        "summary": "Void a posted transaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "description": "Transaction identifier.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The voided transaction.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "404": {
+            "description": "No transaction with that id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "operationId": "listCategories",
+        "tags": ["categories"],
+        "summary": "List reporting categories",
+        "responses": {
+          "200": {
+            "description": "All categories.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryList" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCategory",
+        "tags": ["categories"],
+        "summary": "Create a reporting category",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created category.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Category" }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque"
+      }
+    },
+    "schemas": {
+      "Account": {
+        "type": "object",
+        "required": ["id", "name", "type", "currency", "createdAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["asset", "liability", "equity", "revenue", "expense"]
+          },
+          "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+          "description": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AccountCreate": {
+        "type": "object",
+        "required": ["name", "type", "currency"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["asset", "liability", "equity", "revenue", "expense"]
+          },
+          "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+          "description": { "type": "string" }
+        }
+      },
+      "AccountUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "AccountPage": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Account" }
+          },
+          "nextCursor": { "type": "string" }
+        }
+      },
+      "Balance": {
+        "type": "object",
+        "required": ["accountId", "balanceCents", "currency", "asOf"],
+        "properties": {
+          "accountId": { "type": "string" },
+          "balanceCents": { "type": "integer" },
+          "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+          "asOf": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TransactionEntry": {
+        "type": "object",
+        "required": ["accountId", "amountCents", "direction"],
+        "properties": {
+          "accountId": { "type": "string" },
+          "amountCents": { "type": "integer", "minimum": 1 },
+          "direction": { "type": "string", "enum": ["debit", "credit"] },
+          "memo": { "type": "string" }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "required": ["id", "status", "postedAt", "entries"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "posted", "void"] },
+          "description": { "type": "string" },
+          "postedAt": { "type": "string", "format": "date-time" },
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionEntry" }
+          }
+        }
+      },
+      "TransactionCreate": {
+        "type": "object",
+        "required": ["entries"],
+        "properties": {
+          "description": { "type": "string" },
+          "postedAt": { "type": "string", "format": "date-time" },
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionEntry" }
+          }
+        }
+      },
+      "TransactionPage": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Transaction" }
+          },
+          "nextCursor": { "type": "string" }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "parentId": { "type": "string" }
+        }
+      },
+      "CategoryCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "parentId": { "type": "string" }
+        }
+      },
+      "CategoryList": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "details": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

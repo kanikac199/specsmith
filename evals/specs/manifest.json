@@ -1,0 +1,56 @@
+[
+  {
+    "id": "petstore",
+    "file": "petstore.json",
+    "title": "Swagger Petstore - OpenAPI 3.0",
+    "tier": "hard",
+    "source": "https://petstore3.swagger.io/api/v3/openapi.json",
+    "license": "Apache-2.0",
+    "notes": "Vendored 2026-06-12, 19 operations, 6 schemas (no trimming needed). Assigned hard: it is the largest vendored spec and includes multipart/form-data and form-encoded request bodies, schemaless responses, and OAuth2 + apiKey security."
+  },
+  {
+    "id": "petstore-expanded",
+    "file": "petstore-expanded.json",
+    "title": "Swagger Petstore (expanded)",
+    "tier": "easy",
+    "source": "https://raw.githubusercontent.com/OAI/learn.openapis.org/main/examples/v3.0/petstore-expanded.json",
+    "license": "Apache-2.0",
+    "notes": "Vendored 2026-06-12 (the original OAI/OpenAPI-Specification URL now 404s; the examples moved to the learn.openapis.org repo). 4 operations, 3 schemas, allOf composition, one 204."
+  },
+  {
+    "id": "uspto",
+    "file": "uspto.json",
+    "title": "USPTO Data Set API",
+    "tier": "medium",
+    "source": "https://raw.githubusercontent.com/OAI/learn.openapis.org/main/examples/v3.0/uspto.json",
+    "license": "Apache-2.0",
+    "notes": "Vendored 2026-06-12 (the original OAI/OpenAPI-Specification URL now 404s; the examples moved to the learn.openapis.org repo). 3 operations, 1 schema; server URL variables, form-encoded request body, response without a JSON schema."
+  },
+  {
+    "id": "taskhub",
+    "file": "taskhub.json",
+    "title": "TaskHub",
+    "tier": "easy",
+    "source": "authored",
+    "license": "MIT",
+    "notes": "Feature-stress: plain CRUD (7 operations, 9 schemas), apiKey header auth (X-Api-Key), string enums, date-time formats, integer path param, one 204 response."
+  },
+  {
+    "id": "ledgerly",
+    "file": "ledgerly.json",
+    "title": "Ledgerly",
+    "tier": "medium",
+    "source": "authored",
+    "license": "MIT",
+    "notes": "Feature-stress: bookkeeping API (12 operations, 13 schemas), bearer auth, cursor pagination (cursor/limit query params), arrays of objects, integer minimum constraints, array-valued query params, 404 + default Error responses."
+  },
+  {
+    "id": "polyform",
+    "file": "polyform.json",
+    "title": "Polyform Content Store",
+    "tier": "hard",
+    "source": "authored",
+    "license": "MIT",
+    "notes": "Feature-stress: content store (14 operations, 16 schemas), oneOf + discriminator (Block = TextBlock | ImageBlock | EmbedBlock), allOf composition over BlockBase, nullable fields, uuid/date/date-time/email formats, mixed apiKey + bearer auth varying per operation (including one AND requirement and one public op), deeply nested DocumentMetadata."
+  }
+]
