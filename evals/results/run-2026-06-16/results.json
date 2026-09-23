@@ -1,0 +1,176 @@
+{
+  "runId": "20260616T112751Z",
+  "startedAt": "2026-06-16T11:27:51.162Z",
+  "provider": "claude-code:claude-opus-4-8",
+  "maxIterations": 3,
+  "specs": [
+    {
+      "specId": "petstore",
+      "title": "Swagger Petstore - OpenAPI 3.0",
+      "tier": "hard",
+      "operationCount": 19,
+      "schemaCount": 6,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 54663,
+        "outputTokens": 7731
+      },
+      "wallTimeMs": 68883,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "petstore-expanded",
+      "title": "Swagger Petstore (expanded)",
+      "tier": "easy",
+      "operationCount": 4,
+      "schemaCount": 3,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 47526,
+        "outputTokens": 2430
+      },
+      "wallTimeMs": 28874,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "uspto",
+      "title": "USPTO Data Set API",
+      "tier": "medium",
+      "operationCount": 3,
+      "schemaCount": 1,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 49039,
+        "outputTokens": 6151
+      },
+      "wallTimeMs": 71360,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "taskhub",
+      "title": "TaskHub",
+      "tier": "easy",
+      "operationCount": 7,
+      "schemaCount": 9,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 52645,
+        "outputTokens": 6576
+      },
+      "wallTimeMs": 73316,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "ledgerly",
+      "title": "Ledgerly",
+      "tier": "medium",
+      "operationCount": 12,
+      "schemaCount": 13,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 56367,
+        "outputTokens": 10178
+      },
+      "wallTimeMs": 106122,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "polyform",
+      "title": "Polyform Content Store",
+      "tier": "hard",
+      "operationCount": 14,
+      "schemaCount": 16,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 69216,
+        "outputTokens": 14758
+      },
+      "wallTimeMs": 157573,
+      "typeFidelity": 1
+    }
+  ]
+}

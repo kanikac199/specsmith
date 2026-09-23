@@ -1,0 +1,200 @@
+{
+  "runId": "20260616T113717Z",
+  "startedAt": "2026-06-16T11:37:17.425Z",
+  "provider": "claude-code:claude-haiku-4-5",
+  "maxIterations": 3,
+  "specs": [
+    {
+      "specId": "petstore",
+      "title": "Swagger Petstore - OpenAPI 3.0",
+      "tier": "hard",
+      "operationCount": 19,
+      "schemaCount": 6,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 61562,
+        "outputTokens": 25598
+      },
+      "wallTimeMs": 137253,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "petstore-expanded",
+      "title": "Swagger Petstore (expanded)",
+      "tier": "easy",
+      "operationCount": 4,
+      "schemaCount": 3,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 54828,
+        "outputTokens": 15187
+      },
+      "wallTimeMs": 94740,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "uspto",
+      "title": "USPTO Data Set API",
+      "tier": "medium",
+      "operationCount": 3,
+      "schemaCount": 1,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 1,
+      "responseValidationRate": 1,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 1,
+          "responseValidationRate": 1
+        }
+      ],
+      "iterationsUsed": 1,
+      "usage": {
+        "inputTokens": 54364,
+        "outputTokens": 17691
+      },
+      "wallTimeMs": 125625,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "taskhub",
+      "title": "TaskHub",
+      "tier": "easy",
+      "operationCount": 7,
+      "schemaCount": 9,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 0.8571428571428571,
+      "responseValidationRate": 0.8571428571428571,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.8571428571428571,
+          "responseValidationRate": 0.8571428571428571
+        },
+        {
+          "index": 1,
+          "kind": "runtime-repair",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.8571428571428571,
+          "responseValidationRate": 0.8571428571428571
+        }
+      ],
+      "iterationsUsed": 2,
+      "usage": {
+        "inputTokens": 86919,
+        "outputTokens": 25235
+      },
+      "wallTimeMs": 152692,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "ledgerly",
+      "title": "Ledgerly",
+      "tier": "medium",
+      "operationCount": 12,
+      "schemaCount": 13,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 0.75,
+      "responseValidationRate": 0.75,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.75,
+          "responseValidationRate": 0.75
+        },
+        {
+          "index": 1,
+          "kind": "runtime-repair",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.75,
+          "responseValidationRate": 0.75
+        }
+      ],
+      "iterationsUsed": 2,
+      "usage": {
+        "inputTokens": 92138,
+        "outputTokens": 33329
+      },
+      "wallTimeMs": 193954,
+      "typeFidelity": 1
+    },
+    {
+      "specId": "polyform",
+      "title": "Polyform Content Store",
+      "tier": "hard",
+      "operationCount": 14,
+      "schemaCount": 16,
+      "compiled": true,
+      "operationCoverage": 1,
+      "requestSuccessRate": 0.8571428571428571,
+      "responseValidationRate": 0.8571428571428571,
+      "iterations": [
+        {
+          "index": 0,
+          "kind": "initial",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.8571428571428571,
+          "responseValidationRate": 0.8571428571428571
+        },
+        {
+          "index": 1,
+          "kind": "runtime-repair",
+          "compileOk": true,
+          "compileErrorCount": 0,
+          "requestSuccessRate": 0.8571428571428571,
+          "responseValidationRate": 0.8571428571428571
+        }
+      ],
+      "iterationsUsed": 2,
+      "usage": {
+        "inputTokens": 103378,
+        "outputTokens": 38186
+      },
+      "wallTimeMs": 243133,
+      "typeFidelity": 1
+    }
+  ]
+}
