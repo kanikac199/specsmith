@@ -1,0 +1,49 @@
+{
+  "iterations": [
+    {
+      "index": 0,
+      "kind": "initial",
+      "compile": {
+        "ok": true,
+        "errors": []
+      },
+      "exercise": {
+        "total": 3,
+        "methodsFound": 3,
+        "requestsOk": 3,
+        "responsesOk": 3,
+        "ops": [
+          {
+            "operationId": "list-data-sets",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "list-searchable-fields",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "perform-search",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 46697,
+        "outputTokens": 2312
+      },
+      "wallTimeMs": 28711
+    }
+  ],
+  "usage": {
+    "inputTokens": 46697,
+    "outputTokens": 2312
+  },
+  "wallTimeMs": 28711,
+  "provider": "claude-code:claude-opus-4-8"
+}

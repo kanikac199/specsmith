@@ -1,0 +1,73 @@
+{
+  "iterations": [
+    {
+      "index": 0,
+      "kind": "initial",
+      "compile": {
+        "ok": true,
+        "errors": []
+      },
+      "exercise": {
+        "total": 7,
+        "methodsFound": 7,
+        "requestsOk": 7,
+        "responsesOk": 7,
+        "ops": [
+          {
+            "operationId": "listTasks",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "createTask",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "getTask",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "deleteTask",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "updateTask",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "completeTask",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          },
+          {
+            "operationId": "listLabels",
+            "methodFound": true,
+            "requestOk": true,
+            "responseOk": true
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 52765,
+        "outputTokens": 4452
+      },
+      "wallTimeMs": 44381
+    }
+  ],
+  "usage": {
+    "inputTokens": 52765,
+    "outputTokens": 4452
+  },
+  "wallTimeMs": 44381,
+  "provider": "claude-code:claude-opus-4-8"
+}
