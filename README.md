@@ -232,5 +232,3 @@ examples/     unedited generated output, with its generation.json audit trail
 npm test            # 134 tests, no network/LLM needed (Prism runs on localhost)
 npx tsc --noEmit    # strict typecheck
 ```
-
-MIT © Tushar Shukla
