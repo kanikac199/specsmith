@@ -1,0 +1,47 @@
+{
+  "name": "specsmith",
+  "version": "0.1.0",
+  "description": "An LLM agent that forges typed TypeScript clients from OpenAPI specs, self-corrects against real responses, and proves it with evals.",
+  "type": "module",
+  "license": "MIT",
+  "author": "kanikac199 <143062617+kanikac199@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kanikac199/specsmith.git"
+  },
+  "bin": {
+    "specsmith": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cli": "tsx src/cli.ts",
+    "eval": "tsx src/cli.ts eval"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
+    "@apidevtools/swagger-parser": "^12.0.0",
+    "@stoplight/prism-cli": "^5.14.0",
+    "commander": "^14.0.0",
+    "esbuild": "^0.25.0",
+    "openapi-typescript": "^7.9.0",
+    "picocolors": "^1.1.0",
+    "typescript": "^5.7.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.0",
+    "vitest": "^3.2.0"
+  }
+}
